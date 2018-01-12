@@ -28,23 +28,28 @@ void findGenerator(mpz_t generator, mpz_t prime) {
 }
 
 int main() {
-	mpz_t prime, generator, publicKeyOfA;
+	mpz_t prime, generator, publicKeyOfA, privateKeyOfA;
      // init state
     gmp_randinit_mt(state);
     gmp_randseed_ui(state, time(NULL));
-    const unsigned long int bits = 1023;
+    mpz_inits(privateKeyOfA, publicKeyOfA, NULL);
+   	const unsigned long int bits = 1023;
     
+   	// A part 
     randPrime(prime, bits);
     gmp_printf("===prime===\n%Zd\n", prime);
     findGenerator(generator, prime);
 	gmp_printf("===generator===\n%Zd\n", generator);
 
-	// mpz_t test;
-	// mpz_inits(test, NULL);
-	// mpz_powm(test, generator, prime, prime);
-	// if (mpz_cmp(test, generator) == 0) {
-	// 	printf("true!\n");
-	// }
+	mpz_urandomm(privateKeyOfA, state, prime);
+	mpz_powm(publicKeyOfA, generator, privateKeyOfA, prime);  // cal public key 
 
+	gmp_printf("===publicKeyOfA===\n%Zd\n", publicKeyOfA);
+
+	// B part
+	
+
+	// clean up
+	mpz_clears(privateKeyOfA, publicKeyOfA, generator, prime, NULL);
     return 0;
 }
